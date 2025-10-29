@@ -6,12 +6,20 @@ Wazper is a Node.js-based WhatsApp mass messaging application that enables multi
 
 ## Recent Changes
 
+**Replit Environment Setup (October 28, 2025):**
+- Configured server to bind to 0.0.0.0:5000 for Replit environment
+- Removed deprecated npm packages (npmlog, rimraf, inflight, @npmcli/move-file, are-we-there-yet, gauge)
+- Created comprehensive .gitignore file for Node.js projects
+- Set up workflow for the frontend server on port 5000
+- Configured deployment settings for VM target (maintains WhatsApp session state)
+- Application tested and verified running successfully in Replit
+
 **Database Migration (October 2025):**
 - Migrated from MySQL database with mysql2 driver to SQLite with Sequelize ORM
 - Created Sequelize models for all 7 database tables (Account, Contact, MessageTemplate, Campaign, CampaignMessage, MediaFile, ActivityLog)
 - Converted all database operations to use Sequelize methods exclusively (no raw SQL queries)
 - Removed legacy config/database.js helper to enforce ORM-only usage
-- Database file stored as wazper.db in project root
+- Database file stored as database.sqlite in project root
 - All relationships configured with proper foreign keys and cascading deletes
 - Application fully tested and verified working with new database layer
 
