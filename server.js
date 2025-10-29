@@ -10,6 +10,7 @@ const accountRoutes = require('./routes/accounts');
 const messageRoutes = require('./routes/messages');
 const campaignRoutes = require('./routes/campaigns');
 const uploadRoutes = require('./routes/uploads');
+const contactRoutes = require('./routes/contacts');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api/accounts', accountRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/uploads', uploadRoutes);
+app.use('/api/contacts', contactRoutes);
 
 // Default route
 app.get('/', (req, res) => {

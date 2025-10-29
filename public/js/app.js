@@ -58,29 +58,47 @@ function setupNavigation() {
 
 function setupMenuToggle() {
     const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar-wrapper');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarClose = document.getElementById('sidebar-close');
     
-    // Check if mobile view
-    const isMobile = window.innerWidth <= 768;
-    
-    // On mobile, start with sidebar closed
-    if (isMobile) {
-        sidebar.classList.add('toggled');
+    if (!menuToggle || !sidebar || !sidebarOverlay) {
+        console.error('Sidebar elements not found');
+        return;
     }
     
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('toggled');
+    function toggleSidebar() {
+        sidebar.classList.toggle('active');
+        sidebarOverlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    menuToggle.addEventListener('click', toggleSidebar);
+    
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', closeSidebar);
+    }
+    
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    
+    const navLinks = sidebar.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 991) {
+                closeSidebar();
+            }
+        });
     });
     
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        const nowMobile = window.innerWidth <= 768;
-        if (nowMobile && !isMobile) {
-            // Switched to mobile
-            sidebar.classList.add('toggled');
-        } else if (!nowMobile && isMobile) {
-            // Switched to desktop
-            sidebar.classList.remove('toggled');
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 991) {
+            closeSidebar();
         }
     });
 }
@@ -873,10 +891,494 @@ async function showQRCode(accountId) {
 }
 
 // Function untuk meminta detail akun setelah berhasil connect
-// Placeholder functions for other sections
-async function loadContacts() {
-    // TODO: Implement contacts loading
-    console.log('Loading contacts...');
+// Contact Management Functions
+let currentContactsPage = 1;
+let selectedContacts = [];
+
+async function loadContacts(page = 1) {
+    try {
+        const search = document.getElementById('contactSearch').value;
+        const group = document.getElementById('contactGroupFilter').value;
+        
+        const params = new URLSearchParams({
+            page,
+            limit: 50,
+            ...(search && { search }),
+            ...(group !== 'all' && { group })
+        });
+        
+        const response = await fetch(`/api/contacts?${params}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error);
+        }
+        
+        currentContactsPage = page;
+        renderContactsTable(data.contacts);
+        renderContactsPagination(data.pagination);
+        
+        await loadContactStats();
+        await loadContactGroups();
+        
+    } catch (error) {
+        console.error('Error loading contacts:', error);
+        showAlert('Gagal memuat kontak: ' + error.message, 'danger');
+    }
+}
+
+async function loadContactStats() {
+    try {
+        const response = await fetch('/api/contacts/stats');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('contacts-total').textContent = data.stats.total;
+            document.getElementById('contacts-active').textContent = data.stats.active;
+            document.getElementById('contacts-inactive').textContent = data.stats.inactive;
+            document.getElementById('contacts-groups').textContent = data.stats.groups;
+        }
+    } catch (error) {
+        console.error('Error loading contact stats:', error);
+    }
+}
+
+async function loadContactGroups() {
+    try {
+        const response = await fetch('/api/contacts/groups');
+        const data = await response.json();
+        
+        if (data.success) {
+            const filter = document.getElementById('contactGroupFilter');
+            const currentValue = filter.value;
+            
+            filter.innerHTML = '<option value="all">Semua Grup</option>';
+            
+            data.groups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group.group_name;
+                option.textContent = `${group.group_name} (${group.count})`;
+                filter.appendChild(option);
+            });
+            
+            filter.value = currentValue;
+        }
+    } catch (error) {
+        console.error('Error loading contact groups:', error);
+    }
+}
+
+function renderContactsTable(contacts) {
+    const tbody = document.getElementById('contacts-table-body');
+    
+    if (!contacts || contacts.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Tidak ada kontak ditemukan</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = contacts.map(contact => {
+        const createdDate = new Date(contact.created_at).toLocaleDateString('id-ID');
+        const isSelected = selectedContacts.includes(contact.id);
+        
+        return `
+            <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input contact-checkbox" type="checkbox" 
+                               value="${contact.id}" ${isSelected ? 'checked' : ''}
+                               onchange="toggleContactSelection(${contact.id})">
+                    </div>
+                </td>
+                <td><strong>${contact.name}</strong></td>
+                <td>${contact.phone}</td>
+                <td>${contact.group_name ? `<span class="badge bg-info">${contact.group_name}</span>` : '-'}</td>
+                <td>
+                    <span class="badge ${contact.is_active ? 'bg-success' : 'bg-secondary'}">
+                        ${contact.is_active ? 'Aktif' : 'Tidak Aktif'}
+                    </span>
+                </td>
+                <td>${createdDate}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="showEditContactModal(${contact.id})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteContact(${contact.id})" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    updateBulkDeleteButton();
+}
+
+function renderContactsPagination(pagination) {
+    const paginationInfo = document.getElementById('contacts-pagination-info');
+    const paginationNav = document.getElementById('contacts-pagination');
+    
+    const start = ((pagination.page - 1) * pagination.limit) + 1;
+    const end = Math.min(pagination.page * pagination.limit, pagination.total);
+    
+    paginationInfo.textContent = `Menampilkan ${start}-${end} dari ${pagination.total} kontak`;
+    
+    if (pagination.pages <= 1) {
+        paginationNav.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '';
+    
+    paginationHTML += `
+        <li class="page-item ${pagination.page === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="loadContacts(${pagination.page - 1}); return false;">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+    `;
+    
+    const maxPages = 5;
+    let startPage = Math.max(1, pagination.page - Math.floor(maxPages / 2));
+    let endPage = Math.min(pagination.pages, startPage + maxPages - 1);
+    
+    if (endPage - startPage < maxPages - 1) {
+        startPage = Math.max(1, endPage - maxPages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        paginationHTML += `
+            <li class="page-item ${pagination.page === i ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadContacts(${i}); return false;">${i}</a>
+            </li>
+        `;
+    }
+    
+    paginationHTML += `
+        <li class="page-item ${pagination.page === pagination.pages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="loadContacts(${pagination.page + 1}); return false;">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+    `;
+    
+    paginationNav.innerHTML = paginationHTML;
+}
+
+function toggleContactSelection(contactId) {
+    const index = selectedContacts.indexOf(contactId);
+    
+    if (index > -1) {
+        selectedContacts.splice(index, 1);
+    } else {
+        selectedContacts.push(contactId);
+    }
+    
+    updateBulkDeleteButton();
+}
+
+function updateBulkDeleteButton() {
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const bulkDeleteCount = document.getElementById('bulkDeleteCount');
+    
+    if (selectedContacts.length > 0) {
+        bulkDeleteBtn.style.display = 'block';
+        bulkDeleteCount.textContent = selectedContacts.length;
+    } else {
+        bulkDeleteBtn.style.display = 'none';
+    }
+    
+    const selectAllCheckbox = document.getElementById('selectAllContacts');
+    const checkboxes = document.querySelectorAll('.contact-checkbox');
+    const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+    
+    selectAllCheckbox.checked = allChecked;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('selectAllContacts');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.contact-checkbox');
+            selectedContacts = [];
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+                if (this.checked) {
+                    selectedContacts.push(parseInt(checkbox.value));
+                }
+            });
+            
+            updateBulkDeleteButton();
+        });
+    }
+    
+    const contactSearch = document.getElementById('contactSearch');
+    if (contactSearch) {
+        contactSearch.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadContacts();
+            }
+        });
+    }
+});
+
+function showAddContactModal() {
+    document.getElementById('addContactForm').reset();
+    document.getElementById('contactActive').checked = true;
+    
+    const modal = new bootstrap.Modal(document.getElementById('addContactModal'));
+    modal.show();
+}
+
+async function addContact() {
+    try {
+        const name = document.getElementById('contactName').value.trim();
+        const phone = document.getElementById('contactPhone').value.trim();
+        const group_name = document.getElementById('contactGroup').value.trim();
+        const is_active = document.getElementById('contactActive').checked;
+        
+        if (!name || !phone) {
+            showAlert('Nama dan nomor telepon harus diisi', 'warning');
+            return;
+        }
+        
+        const response = await fetch('/api/contacts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, group_name, is_active })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error);
+        }
+        
+        bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
+        
+        showAlert('Kontak berhasil ditambahkan', 'success');
+        loadContacts(currentContactsPage);
+        
+    } catch (error) {
+        console.error('Error adding contact:', error);
+        showAlert('Gagal menambahkan kontak: ' + error.message, 'danger');
+    }
+}
+
+async function showEditContactModal(contactId) {
+    try {
+        const response = await fetch(`/api/contacts?search=${contactId}`);
+        const data = await response.json();
+        
+        if (!data.success || !data.contacts || data.contacts.length === 0) {
+            throw new Error('Kontak tidak ditemukan');
+        }
+        
+        const contact = data.contacts.find(c => c.id === contactId);
+        
+        if (!contact) {
+            throw new Error('Kontak tidak ditemukan');
+        }
+        
+        document.getElementById('editContactId').value = contact.id;
+        document.getElementById('editContactName').value = contact.name;
+        document.getElementById('editContactPhone').value = contact.phone;
+        document.getElementById('editContactGroup').value = contact.group_name || '';
+        document.getElementById('editContactActive').checked = contact.is_active;
+        
+        const modal = new bootstrap.Modal(document.getElementById('editContactModal'));
+        modal.show();
+        
+    } catch (error) {
+        console.error('Error loading contact:', error);
+        showAlert('Gagal memuat data kontak: ' + error.message, 'danger');
+    }
+}
+
+async function updateContact() {
+    try {
+        const id = document.getElementById('editContactId').value;
+        const name = document.getElementById('editContactName').value.trim();
+        const phone = document.getElementById('editContactPhone').value.trim();
+        const group_name = document.getElementById('editContactGroup').value.trim();
+        const is_active = document.getElementById('editContactActive').checked;
+        
+        if (!name || !phone) {
+            showAlert('Nama dan nomor telepon harus diisi', 'warning');
+            return;
+        }
+        
+        const response = await fetch(`/api/contacts/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, group_name, is_active })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error);
+        }
+        
+        bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
+        
+        showAlert('Kontak berhasil diupdate', 'success');
+        loadContacts(currentContactsPage);
+        
+    } catch (error) {
+        console.error('Error updating contact:', error);
+        showAlert('Gagal mengupdate kontak: ' + error.message, 'danger');
+    }
+}
+
+async function deleteContact(contactId) {
+    if (!confirm('Apakah Anda yakin ingin menghapus kontak ini?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/contacts/${contactId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error);
+        }
+        
+        showAlert('Kontak berhasil dihapus', 'success');
+        loadContacts(currentContactsPage);
+        
+    } catch (error) {
+        console.error('Error deleting contact:', error);
+        showAlert('Gagal menghapus kontak: ' + error.message, 'danger');
+    }
+}
+
+async function bulkDeleteContacts() {
+    if (selectedContacts.length === 0) {
+        showAlert('Tidak ada kontak yang dipilih', 'warning');
+        return;
+    }
+    
+    if (!confirm(`Apakah Anda yakin ingin menghapus ${selectedContacts.length} kontak?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/contacts/bulk/delete', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedContacts })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error);
+        }
+        
+        selectedContacts = [];
+        showAlert(data.message, 'success');
+        loadContacts(currentContactsPage);
+        
+    } catch (error) {
+        console.error('Error bulk deleting contacts:', error);
+        showAlert('Gagal menghapus kontak: ' + error.message, 'danger');
+    }
+}
+
+function showImportModal() {
+    document.getElementById('importCsvForm').reset();
+    document.getElementById('importProgress').style.display = 'none';
+    document.getElementById('importResults').style.display = 'none';
+    document.getElementById('importCsvBtn').disabled = false;
+    
+    const modal = new bootstrap.Modal(document.getElementById('importCsvModal'));
+    modal.show();
+}
+
+async function importCsv() {
+    try {
+        const fileInput = document.getElementById('csvFile');
+        
+        if (!fileInput.files || fileInput.files.length === 0) {
+            showAlert('Pilih file CSV terlebih dahulu', 'warning');
+            return;
+        }
+        
+        const file = fileInput.files[0];
+        
+        if (file.size > 5 * 1024 * 1024) {
+            showAlert('Ukuran file maksimal 5MB', 'warning');
+            return;
+        }
+        
+        document.getElementById('importProgress').style.display = 'block';
+        document.getElementById('importResults').style.display = 'none';
+        document.getElementById('importCsvBtn').disabled = true;
+        
+        const formData = new FormData();
+        formData.append('csvFile', file);
+        
+        const response = await fetch('/api/contacts/import/csv', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        document.getElementById('importProgress').style.display = 'none';
+        
+        if (!data.success) {
+            throw new Error(data.error);
+        }
+        
+        let resultsHTML = `
+            <p><strong>Berhasil:</strong> ${data.results.success} kontak</p>
+            <p><strong>Duplikat:</strong> ${data.results.duplicate} kontak</p>
+            <p><strong>Gagal:</strong> ${data.results.failed} kontak</p>
+        `;
+        
+        if (data.results.errors && data.results.errors.length > 0) {
+            resultsHTML += '<hr><p><strong>Error:</strong></p><ul class="small">';
+            data.results.errors.slice(0, 10).forEach(error => {
+                resultsHTML += `<li>${error}</li>`;
+            });
+            if (data.results.errors.length > 10) {
+                resultsHTML += `<li>... dan ${data.results.errors.length - 10} error lainnya</li>`;
+            }
+            resultsHTML += '</ul>';
+        }
+        
+        document.getElementById('importResultsText').innerHTML = resultsHTML;
+        document.getElementById('importResults').style.display = 'block';
+        
+        showAlert(data.message, 'success');
+        loadContacts(currentContactsPage);
+        
+    } catch (error) {
+        console.error('Error importing CSV:', error);
+        document.getElementById('importProgress').style.display = 'none';
+        document.getElementById('importCsvBtn').disabled = false;
+        showAlert('Gagal mengimport CSV: ' + error.message, 'danger');
+    }
+}
+
+function exportContacts() {
+    const group = document.getElementById('contactGroupFilter').value;
+    const url = `/api/contacts/export/csv${group !== 'all' ? `?group=${group}` : ''}`;
+    
+    window.open(url, '_blank');
+    showAlert('Export kontak dimulai...', 'info');
 }
 
 async function loadTemplates() {

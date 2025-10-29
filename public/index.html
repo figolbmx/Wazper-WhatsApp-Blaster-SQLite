@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wazper - WhatsApp Blaster Dashboard</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Inline Styles -->
     <style>
         .bg-success-subtle {
             background-color: #d1e7dd !important;
@@ -29,153 +38,204 @@
             border-left-color: #dc3545;
         }
     </style>
+    
+    <!-- Custom CSS -->
     <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="d-flex" id="wrapper">
+    <div class="wrapper">
         <!-- Sidebar -->
-        <div class="bg-dark border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading bg-primary text-white p-3">
-                <i class="fas fa-paper-plane me-2"></i>Wazper
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <i class="fas fa-paper-plane brand-icon"></i>
+                    <span class="brand-text">Wazper</span>
+                </div>
+                <button class="sidebar-toggler d-lg-none" id="sidebar-close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="list-group list-group-flush">
-                <a href="#dashboard" class="list-group-item list-group-item-action bg-dark text-white active" data-section="dashboard">
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                </a>
-                <a href="#accounts" class="list-group-item list-group-item-action bg-dark text-white" data-section="accounts">
-                    <i class="fas fa-users me-2"></i>Akun WhatsApp
-                </a>
-                <a href="#messages" class="list-group-item list-group-item-action bg-dark text-white" data-section="messages">
-                    <i class="fas fa-paper-plane me-2"></i>Kirim Pesan
-                </a>
-                <a href="#contacts" class="list-group-item list-group-item-action bg-dark text-white" data-section="contacts">
-                    <i class="fas fa-address-book me-2"></i>Kontak
-                </a>
-                <a href="#templates" class="list-group-item list-group-item-action bg-dark text-white" data-section="templates">
-                    <i class="fas fa-file-alt me-2"></i>Template Pesan
-                </a>
-                <a href="#campaigns" class="list-group-item list-group-item-action bg-dark text-white" data-section="campaigns">
-                    <i class="fas fa-broadcast-tower me-2"></i>Kampanye
-                </a>
-                <a href="#media" class="list-group-item list-group-item-action bg-dark text-white" data-section="media">
-                    <i class="fas fa-images me-2"></i>Media
-                </a>
-                <a href="#logs" class="list-group-item list-group-item-action bg-dark text-white" data-section="logs">
-                    <i class="fas fa-history me-2"></i>Log Aktivitas
-                </a>
+            
+            <div class="sidebar-menu">
+                <nav>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <span class="nav-text">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#accounts" class="nav-link" data-section="accounts">
+                                <i class="nav-icon fas fa-users"></i>
+                                <span class="nav-text">Akun WhatsApp</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#messages" class="nav-link" data-section="messages">
+                                <i class="nav-icon fas fa-paper-plane"></i>
+                                <span class="nav-text">Kirim Pesan</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#contacts" class="nav-link" data-section="contacts">
+                                <i class="nav-icon fas fa-address-book"></i>
+                                <span class="nav-text">Kontak</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#templates" class="nav-link" data-section="templates">
+                                <i class="nav-icon fas fa-file-alt"></i>
+                                <span class="nav-text">Template Pesan</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#campaigns" class="nav-link" data-section="campaigns">
+                                <i class="nav-icon fas fa-broadcast-tower"></i>
+                                <span class="nav-text">Kampanye</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#media" class="nav-link" data-section="media">
+                                <i class="nav-icon fas fa-images"></i>
+                                <span class="nav-text">Media</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#logs" class="nav-link" data-section="logs">
+                                <i class="nav-icon fas fa-history"></i>
+                                <span class="nav-text">Log Aktivitas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-        </div>
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <div class="container-fluid">
-                    <button class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="navbar-nav ms-auto">
-                        <div class="nav-item">
-                            <span class="navbar-text" id="status-indicator">
-                                <i class="fas fa-circle text-success me-1"></i>Online
-                            </span>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-status">
+                                <span class="status-dot"></span>
+                                Online
+                            </div>
                         </div>
                     </div>
                 </div>
-            </nav>
+            </div>
+        </aside>
 
-            <div class="container-fluid p-4">
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <div class="navbar-container">
+                    <button class="menu-toggle" id="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="navbar-brand-mobile d-lg-none">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        <span>Wazper</span>
+                    </div>
+                    
+                    <div class="navbar-end">
+                        <div class="status-indicator">
+                            <i class="fas fa-circle text-success"></i>
+                            <span class="d-none d-md-inline">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
                 <!-- Dashboard Section -->
                 <div id="dashboard-section" class="content-section">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                    <div class="section-header">
+                        <h1 class="section-title">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </h1>
                         <button class="btn btn-primary" onclick="refreshStats()">
-                            <i class="fas fa-sync-alt"></i> Refresh
+                            <i class="fas fa-sync-alt me-2"></i>Refresh
                         </button>
                     </div>
 
-                    <div class="row mb-4">
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Total Akun
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-accounts">0</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                                        </div>
+                    <!-- Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Total Akun</div>
+                                        <div class="stats-value" id="total-accounts">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-primary">
+                                        <i class="fas fa-users"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Akun Terhubung
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="connected-accounts">0</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
-                                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Akun Terhubung</div>
+                                        <div class="stats-value" id="connected-accounts">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-success">
+                                        <i class="fas fa-check-circle"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Kampanye Aktif
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="active-campaigns">0</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-broadcast-tower fa-2x text-gray-300"></i>
-                                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Kampanye Aktif</div>
+                                        <div class="stats-value" id="active-campaigns">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-info">
+                                        <i class="fas fa-broadcast-tower"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Kontak
-                                            </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-contacts">0</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-address-book fa-2x text-gray-300"></i>
-                                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Total Kontak</div>
+                                        <div class="stats-value" id="total-contacts">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-warning">
+                                        <i class="fas fa-address-book"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-8 mb-4">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Kampanye Terbaru</h6>
+                    <!-- Content Cards -->
+                    <div class="row g-3">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-chart-line me-2"></i>Kampanye Terbaru
+                                    </h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="recent-campaigns-table">
+                                        <table class="table table-hover align-middle" id="recent-campaigns-table">
                                             <thead>
                                                 <tr>
                                                     <th>Nama Kampanye</th>
@@ -191,10 +251,12 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 mb-4">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Status Akun</h6>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-signal me-2"></i>Status Akun
+                                    </h5>
                                 </div>
                                 <div class="card-body">
                                     <div id="account-status-list"></div>
@@ -206,22 +268,26 @@
 
                 <!-- Accounts Section -->
                 <div id="accounts-section" class="content-section" style="display: none;">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2><i class="fas fa-users me-2"></i>Akun WhatsApp</h2>
+                    <div class="section-header">
+                        <h1 class="section-title">
+                            <i class="fas fa-users me-2"></i>Akun WhatsApp
+                        </h1>
                         <div class="btn-group">
                             <button class="btn btn-info" onclick="checkAllAccountsStatus()" title="Cek status semua akun">
-                                <i class="fas fa-sync-alt"></i> Cek Semua Status
+                                <i class="fas fa-sync-alt me-2"></i>
+                                <span class="d-none d-md-inline">Cek Semua Status</span>
                             </button>
                             <button class="btn btn-primary" onclick="createNewAccount()">
-                                <i class="fas fa-plus"></i> Tambah Akun
+                                <i class="fas fa-plus me-2"></i>
+                                <span class="d-none d-md-inline">Tambah Akun</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="card shadow">
+                    <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="accounts-table">
+                                <table class="table table-hover align-middle" id="accounts-table">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -241,16 +307,19 @@
 
                 <!-- Messages Section -->
                 <div id="messages-section" class="content-section" style="display: none;">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2><i class="fas fa-paper-plane me-2"></i>Kirim Pesan WhatsApp</h2>
+                    <div class="section-header">
+                        <h1 class="section-title">
+                            <i class="fas fa-paper-plane me-2"></i>Kirim Pesan WhatsApp
+                        </h1>
                     </div>
 
-                    <div class="row">
-                        <!-- Form Kirim Pesan -->
+                    <div class="row g-3">
                         <div class="col-lg-8">
-                            <div class="card shadow">
+                            <div class="card">
                                 <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Compose Message</h5>
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-envelope me-2"></i>Compose Message
+                                    </h5>
                                 </div>
                                 <div class="card-body">
                                     <form id="sendMessageForm">
@@ -281,7 +350,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Media Upload Section -->
                                         <div class="mb-3">
                                             <label class="form-label">
                                                 <i class="fas fa-paperclip me-2"></i>Lampiran Media (Opsional)
@@ -297,7 +365,6 @@
                                                 Supported: Gambar (JPG, PNG, GIF), Video (MP4), Audio (MP3, OGG), Dokumen (PDF, DOC, TXT)
                                             </div>
                                             
-                                            <!-- Media Preview -->
                                             <div id="mediaPreview" style="display: none;" class="mt-2 p-2 border rounded">
                                                 <div class="d-flex align-items-center">
                                                     <div id="mediaIcon" class="me-2"></div>
@@ -309,7 +376,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Delay Configuration -->
                                         <div class="mb-3">
                                             <label class="form-label">
                                                 <i class="fas fa-clock me-2"></i>Delay Antar Pesan (detik)
@@ -333,7 +399,7 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <div class="form-check">
+                                            <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" id="scheduleMessage">
                                                 <label class="form-check-label" for="scheduleMessage">
                                                     Jadwalkan Pesan
@@ -354,7 +420,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Action Buttons -->
                                         <div class="row">
                                             <div class="col-12">
                                                 <button type="submit" class="btn btn-primary btn-lg w-100" id="sendButton">
@@ -363,7 +428,6 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Control Buttons (hidden by default) -->
                                         <div class="row mt-2" id="controlButtons" style="display: none;">
                                             <div class="col-6">
                                                 <button type="button" class="btn btn-warning btn-lg w-100" id="pauseButton">
@@ -381,14 +445,13 @@
                             </div>
                         </div>
 
-                        <!-- Preview & Quick Actions -->
                         <div class="col-lg-4">
-                            <div class="card shadow mb-3">
+                            <div class="card mb-3">
                                 <div class="card-header bg-success text-white">
                                     <h6 class="mb-0"><i class="fas fa-eye me-2"></i>Preview Pesan</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="bg-light p-3 rounded" style="min-height: 150px;">
+                                    <div class="message-preview">
                                         <div id="messagePreview" class="text-muted">
                                             Preview pesan akan muncul di sini...
                                         </div>
@@ -396,9 +459,9 @@
                                 </div>
                             </div>
 
-                            <div class="card shadow mb-3">
+                            <div class="card mb-3">
                                 <div class="card-header bg-info text-white">
-                                    <h6 class="mb-0"><i class="fas fa-lightning-bolt me-2"></i>Quick Templates</h6>
+                                    <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Templates</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="d-grid gap-2">
@@ -418,22 +481,17 @@
                                 </div>
                             </div>
 
-                            <!-- Send Results -->
-                            <div class="card shadow" id="sendResultsCard" style="display: none;">
+                            <div class="card" id="sendResultsCard" style="display: none;">
                                 <div class="card-header bg-warning text-dark">
                                     <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Hasil Pengiriman</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-2">
                                         <small class="text-muted">Summary:</small>
-                                        <div id="sendSummary" class="fw-bold text-primary">
-                                            <!-- Summary will be inserted here -->
-                                        </div>
+                                        <div id="sendSummary" class="fw-bold text-primary"></div>
                                     </div>
                                     <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
-                                        <div id="sendResults">
-                                            <!-- Results will be inserted here -->
-                                        </div>
+                                        <div id="sendResults"></div>
                                     </div>
                                     <div class="mt-2">
                                         <button class="btn btn-sm btn-outline-secondary" onclick="clearSendResults()">
@@ -446,8 +504,174 @@
                     </div>
                 </div>
 
-                <!-- Other sections will be loaded dynamically -->
-                <div id="contacts-section" class="content-section" style="display: none;"></div>
+                <!-- Contacts Section -->
+                <div id="contacts-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h1 class="section-title">
+                            <i class="fas fa-address-book me-2"></i>Manajemen Kontak
+                        </h1>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="exportContacts()">
+                                <i class="fas fa-download me-2"></i>
+                                <span class="d-none d-md-inline">Export CSV</span>
+                            </button>
+                            <button class="btn btn-info" onclick="showImportModal()">
+                                <i class="fas fa-upload me-2"></i>
+                                <span class="d-none d-md-inline">Import CSV</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="showAddContactModal()">
+                                <i class="fas fa-plus me-2"></i>
+                                <span class="d-none d-md-inline">Tambah Kontak</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Total Kontak</div>
+                                        <div class="stats-value" id="contacts-total">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-primary">
+                                        <i class="fas fa-address-book"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Aktif</div>
+                                        <div class="stats-value" id="contacts-active">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-success">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Tidak Aktif</div>
+                                        <div class="stats-value" id="contacts-inactive">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-warning">
+                                        <i class="fas fa-times-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-card-body">
+                                    <div class="stats-info">
+                                        <div class="stats-label">Grup</div>
+                                        <div class="stats-value" id="contacts-groups">0</div>
+                                    </div>
+                                    <div class="stats-icon bg-info">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters and Search -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="contactSearch" class="form-label">Cari Kontak</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="contactSearch" 
+                                               placeholder="Nama atau nomor...">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="contactGroupFilter" class="form-label">Filter Grup</label>
+                                    <select class="form-select" id="contactGroupFilter">
+                                        <option value="all">Semua Grup</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label d-block">&nbsp;</label>
+                                    <button class="btn btn-primary w-100" onclick="loadContacts()">
+                                        <i class="fas fa-filter me-2"></i>Terapkan Filter
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label d-block">&nbsp;</label>
+                                    <button class="btn btn-danger w-100" id="bulkDeleteBtn" 
+                                            onclick="bulkDeleteContacts()" style="display: none;">
+                                        <i class="fas fa-trash me-2"></i><span id="bulkDeleteCount">0</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacts Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-list me-2"></i>Daftar Kontak
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle" id="contacts-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="50">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="selectAllContacts">
+                                                </div>
+                                            </th>
+                                            <th>Nama</th>
+                                            <th>Nomor Telepon</th>
+                                            <th>Grup</th>
+                                            <th>Status</th>
+                                            <th>Tanggal Dibuat</th>
+                                            <th width="150">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="contacts-table-body">
+                                        <tr>
+                                            <td colspan="7" class="text-center py-4">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                                <div class="mt-2">Memuat kontak...</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="text-muted" id="contacts-pagination-info">
+                                    Menampilkan 0 dari 0 kontak
+                                </div>
+                                <nav>
+                                    <ul class="pagination mb-0" id="contacts-pagination"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other sections loaded dynamically -->
                 <div id="templates-section" class="content-section" style="display: none;"></div>
                 <div id="campaigns-section" class="content-section" style="display: none;"></div>
                 <div id="media-section" class="content-section" style="display: none;"></div>
@@ -532,6 +756,148 @@
         </div>
     </div>
 
+    <!-- Add Contact Modal -->
+    <div class="modal fade" id="addContactModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Tambah Kontak Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addContactForm">
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label">Nama <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="contactName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactPhone" class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="contactPhone" 
+                                   placeholder="628123456789" required>
+                            <div class="form-text">Format: 628xxxxxxxxxx (dengan kode negara)</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactGroup" class="form-label">Grup (Opsional)</label>
+                            <input type="text" class="form-control" id="contactGroup" 
+                                   placeholder="Misal: Pelanggan, Reseller, dll">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="contactActive" checked>
+                                <label class="form-check-label" for="contactActive">
+                                    Aktif
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="addContact()">
+                        <i class="fas fa-save me-2"></i>Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Contact Modal -->
+    <div class="modal fade" id="editContactModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Kontak</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editContactForm">
+                        <input type="hidden" id="editContactId">
+                        <div class="mb-3">
+                            <label for="editContactName" class="form-label">Nama <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editContactName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editContactPhone" class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editContactPhone" required>
+                            <div class="form-text">Format: 628xxxxxxxxxx (dengan kode negara)</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editContactGroup" class="form-label">Grup (Opsional)</label>
+                            <input type="text" class="form-control" id="editContactGroup">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="editContactActive">
+                                <label class="form-check-label" for="editContactActive">
+                                    Aktif
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="updateContact()">
+                        <i class="fas fa-save me-2"></i>Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import CSV Modal -->
+    <div class="modal fade" id="importCsvModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Import Kontak dari CSV</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Format CSV:</h6>
+                        <p class="mb-2">File CSV harus memiliki kolom berikut (dengan atau tanpa header):</p>
+                        <code>Nama,Nomor Telepon,Grup (opsional)</code>
+                        <p class="mt-2 mb-0"><strong>Contoh:</strong></p>
+                        <pre class="mt-1 mb-0">Name,Phone,Group
+John Doe,628123456789,Pelanggan
+Jane Smith,628234567890,Reseller
+Bob Wilson,628345678901</pre>
+                    </div>
+                    
+                    <form id="importCsvForm">
+                        <div class="mb-3">
+                            <label for="csvFile" class="form-label">Pilih File CSV</label>
+                            <input type="file" class="form-control" id="csvFile" accept=".csv" required>
+                            <div class="form-text">Maksimal ukuran file: 5MB</div>
+                        </div>
+                    </form>
+
+                    <div id="importProgress" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 100%"></div>
+                        </div>
+                        <p class="text-center mt-2">Sedang mengimport kontak...</p>
+                    </div>
+
+                    <div id="importResults" style="display: none;">
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-check-circle me-2"></i>Import Selesai!</h6>
+                            <div id="importResultsText"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="importCsvBtn" onclick="importCsv()">
+                        <i class="fas fa-upload me-2"></i>Import
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="d-none">
         <div class="spinner-border text-primary" role="status">
@@ -539,7 +905,13 @@
         </div>
     </div>
 
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- App JS -->
     <script src="/js/app.js"></script>
 </body>
 </html>
